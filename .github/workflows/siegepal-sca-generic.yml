@@ -1,0 +1,26 @@
+name: SiegePal SCA Generic
+on:
+  workflow_dispatch:
+jobs:
+  sca:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Trivy FS scan
+        run: trivy fs --format sarif --output trivy.sarif .
+      - name: Upload SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy.sarif
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: siegepal-sca-results
+          path: trivy.sarif
+      - name: Notify SiegePal
+        env:
+          SIEGEPAL_CALLBACK_URL: "https://siegepal.example/api/github/callback"
+        run: >
+          curl -sS -X POST "$SIEGEPAL_CALLBACK_URL"
+          -H "Content-Type: application/json"
+          -d '{"repository":"webheapdev-tech/test","run_id":"${{ github.run_id }}","category":"sca"}'

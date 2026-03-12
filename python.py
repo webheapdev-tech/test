@@ -16,7 +16,7 @@ def sql_injection(user_input: str):
 
 
 def command_injection(cmd: str):
-    return subprocess.check_output(cmd, shell=True, text=True)  # nosec B602
+return subprocess.check_output(cmd, shell=False, text=True)  # nosec B602
 
 
 def unsafe_eval(expr: str):

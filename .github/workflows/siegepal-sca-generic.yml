@@ -23,9 +23,10 @@ jobs:
         with:
           sarif_file: trivy.sarif
       - name: Notify SiegePal
+        continue-on-error: true
         env:
           SIEGEPAL_CALLBACK_URL: "https://siegepal.example/api/github/callback"
-        run: |
+        run: >
           curl -sS -X POST "$SIEGEPAL_CALLBACK_URL"
           -H "Content-Type: application/json"
           -d '{"repository":"webheapdev-tech/test","run_id":"${{ github.run_id }}","category":"sca"}'

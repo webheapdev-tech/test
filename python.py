@@ -12,7 +12,9 @@ HARDCODED_PASSWORD = "SuperSecret123!"  # hardcoded secret
 def sql_injection(user_input: str):
     conn = sqlite3.connect(":memory:")
     query = f"SELECT * FROM users WHERE username = '{user_input}'"  # SQL injection
-    return conn.execute(query).fetchall()
+# Replace string-formatted SQL with parameterized query
+query = "SELECT * FROM users WHERE username = ?"
+cursor.execute(query, (user_input,))
 
 
 def command_injection(cmd: str):

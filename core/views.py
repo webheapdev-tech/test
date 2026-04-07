@@ -62,7 +62,6 @@ def seed_data(request):
     return JsonResponse({"status": "ok", "message": "Seed data ready."})
 
 
-@csrf_exempt
 def login_unsafe(request):
     if request.method != "POST":
         return JsonResponse(

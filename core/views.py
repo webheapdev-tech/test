@@ -119,9 +119,10 @@ def record_insecure(request, record_id):
 
 
 def reflected_xss(request):
+    from django.utils.html import escape
     payload = request.GET.get("q", "guest")
     # VULN: unsanitized reflected HTML.
-    return HttpResponse(f"<h1>Hello {payload}</h1><p>Reflected XSS endpoint.</p>")
+    return HttpResponse(f"<h1>Hello {escape(payload)}</h1><p>Reflected XSS endpoint.</p>")
 
 
 @csrf_exempt

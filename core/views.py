@@ -322,10 +322,11 @@ def admin_panel_weak(request):
 
 
 def eval_exec(request):
-    # VULN: arbitrary python execution with eval.
-    expr = request.GET.get("expr", "__import__('os').popen('id').read()")
+    # Fixed: replaced dangerous eval() with ast.literal_eval() to prevent arbitrary code execution.
+    import ast
+    expr = request.GET.get("expr", "")
     try:
-        result = eval(expr)
+        result = ast.literal_eval(expr)
     except Exception as exc:
         result = str(exc)
     return HttpResponse(f"<pre>{result}</pre>")

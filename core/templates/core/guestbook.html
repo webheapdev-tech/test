@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Guestbook</title>
+</head>
+<body>
+    <h1>Guestbook (Stored XSS Demo)</h1>
+    <p><a href="/">Back</a></p>
+
+    <form method="post" action="/guestbook/">
+        {% csrf_token %}
+        <label>Name <input type="text" name="name" value="guest"></label><br>
+        <label>Message</label><br>
+        <textarea name="message" rows="4" cols="60"></textarea><br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <hr>
+    <h2>Entries</h2>
+    {% for entry in entries %}
+        <div>
+            <strong>{{ entry.name }}</strong> ({{ entry.created_at }})<br>
+            {{ entry.message|safe }}
+        </div>
+        <hr>
+    {% empty %}
+        <p>No entries yet.</p>
+    {% endfor %}
+</body>
+</html>

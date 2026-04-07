@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VulnLab Django</title>
+</head>
+<body>
+    <h1>VulnLab Django (Intentionally Insecure)</h1>
+    <p>Use only in local isolated environment.</p>
+
+    <h2>Quick Start</h2>
+    <ol>
+        <li>Call <code>/seed/</code> to load demo users and records.</li>
+        <li>Test each endpoint below with browser, curl, or your scanner.</li>
+    </ol>
+
+    <h2>Endpoints</h2>
+    <ul>
+        <li><a href="/seed/">/seed/</a> - unauthenticated data bootstrap</li>
+        <li><code>/login-unsafe/</code> (POST) - SQLi + weak auth</li>
+        <li><code>/register-mass/</code> (POST) - mass assignment (set role/token directly)</li>
+        <li><a href="/impersonate/?user_id=1">/impersonate/?user_id=1</a> - auth bypass / session impersonation</li>
+        <li><a href="/admin-panel/?admin=1">/admin-panel/?admin=1</a> - admin auth bypass by query param</li>
+        <li><a href="/profile/?user_id=1">/profile/?user_id=1</a> - IDOR + sensitive data exposure</li>
+        <li><a href="/records/1/">/records/1/</a> - IDOR on records</li>
+        <li><a href="/users-search/?q=' OR '1'='1">/users-search/?q=...</a> - SQL injection (search)</li>
+        <li><a href="/users-leak/">/users-leak/</a> - full user leak + permissive CORS</li>
+        <li><a href="/xss-reflected/?q=%3Cscript%3Ealert(1)%3C/script%3E">/xss-reflected/</a> - reflected XSS</li>
+        <li><a href="/guestbook/">/guestbook/</a> - stored XSS + no CSRF</li>
+        <li><a href="/cmd/?cmd=id">/cmd/?cmd=id</a> - command injection / RCE</li>
+        <li><a href="/eval/?expr=__import__('os').popen('id').read()">/eval/?expr=...</a> - arbitrary eval RCE</li>
+        <li><a href="/read-file/?path=/etc/hosts">/read-file/?path=/etc/hosts</a> - path traversal / local file read</li>
+        <li><code>/pickle/?payload=...</code> - insecure deserialization</li>
+        <li><a href="/reset-password/?user_id=1">/reset-password/?user_id=1</a> - predictable reset token</li>
+        <li><a href="/go/?next=https://example.com">/go/?next=https://example.com</a> - open redirect</li>
+        <li><a href="/fetch/?url=http://127.0.0.1:8000/debug-env/">/fetch/?url=...</a> - SSRF</li>
+        <li><code>/upload/</code> (POST multipart) - unrestricted upload</li>
+        <li><code>/extract-tar/</code> (POST multipart) - unsafe TAR extraction (Zip Slip style)</li>
+        <li><a href="/change-password/?user_id=1&new_password=hacked">/change-password/</a> - state change by GET, no auth</li>
+        <li><a href="/ssti/?tpl=Host:%20{{request.META.HTTP_HOST}}">/ssti/?tpl=...</a> - template injection</li>
+        <li><a href="/debug-env/">/debug-env/</a> - environment leak</li>
+    </ul>
+
+    <h2>Unsafe Login Form</h2>
+    <form method="post" action="/login-unsafe/">
+        {% csrf_token %}
+        <label>Username <input type="text" name="username" value="admin"></label><br>
+        <label>Password <input type="text" name="password" value="admin123"></label><br>
+        <button type="submit">Login</button>
+    </form>
+
+    <h2>Unsafe Upload Form</h2>
+    <form method="post" enctype="multipart/form-data" action="/upload/">
+        {% csrf_token %}
+        <input type="file" name="file">
+        <button type="submit">Upload</button>
+    </form>
+</body>
+</html>

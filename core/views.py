@@ -249,9 +249,9 @@ def template_injection(request):
     tpl = request.GET.get("tpl", "Hello {{ request.META.HTTP_HOST }}")
     try:
         rendered = Template(tpl).render(Context({"request": request, "os": os}))
-        return HttpResponse(rendered)
+        return render(request, "core/template_injection.html", {"rendered": rendered})
     except Exception as exc:
-        return HttpResponse(f"Template error: {exc}", status=500)
+        return render(request, "core/template_injection.html", {"rendered": f"Template error: {exc}"}, status=500)
 
 
 def debug_env(request):

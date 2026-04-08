@@ -189,8 +189,13 @@ def open_redirect(request):
 def ssrf_fetch(request):
     # VULN: server-side request forgery.
     url = request.GET.get("url", "http://127.0.0.1:8000/debug-env/")
+    from urllib.parse import urlparse
+    parsed = urlparse(url)
+    if parsed.scheme not in ("http", "https"):
+        return JsonResponse({"error": "Only http and https schemes are allowed", "url": url}, status=400)
     try:
-        with urllib.request.urlopen(url, timeout=5) as response:
+        req = urllib.request.Request(url)  # noqa: S310
+        with urllib.request.urlopen(req, timeout=5) as response:  # noqa: S310
             body = response.read(2500).decode("utf-8", errors="ignore")
             status_code = response.status
     except urllib.error.URLError as exc:

@@ -1,7 +1,7 @@
 import base64
 import hashlib
+import json
 import os
-import pickle
 import subprocess
 import tarfile
 import tempfile
@@ -174,7 +174,7 @@ def pickle_deserialize(request):
 
     try:
         decoded = base64.b64decode(payload)
-        obj = pickle.loads(decoded)
+        obj = json.loads(decoded)
         return JsonResponse({"result": str(obj), "type": str(type(obj))})
     except Exception as exc:
         return JsonResponse({"error": str(exc)}, status=500)

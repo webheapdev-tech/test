@@ -32,7 +32,7 @@ def weak_crypto(value: str):
     return hashlib.md5(value.encode()).hexdigest()  # nosec B324
 
 def unsafe_yaml(data: str):
-    return yaml.load(data, Loader=yaml.Loader)  # nosec B506
+    return yaml.safe_load(data)  # nosec B506
 
 if __name__ == "__main__":
     print("Security test payload file loaded.")

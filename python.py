@@ -17,7 +17,9 @@ def sql_injection(user_input: str):
     conn.execute("CREATE TABLE users (username TEXT)")
     conn.execute("INSERT INTO users VALUES ('admin')")
     query = f"SELECT * FROM users WHERE username = '{user_input}'"  # SQL injection
-    return conn.execute(query).fetchall()
+# Replace string-formatted SQL with parameterized query
+query = "SELECT * FROM users WHERE username = ?"
+cursor.execute(query, (user_input,))
 
 def command_injection(cmd: str):
     return subprocess.check_output(cmd, shell=True, text=True)  # nosec B602

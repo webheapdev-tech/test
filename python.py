@@ -20,7 +20,9 @@ def sql_injection(user_input: str):
     return conn.execute(query).fetchall()
 
 def command_injection(cmd: str):
-    return subprocess.check_output(cmd, shell=True, text=True)  # nosec B602
+# Avoid shell=True; pass explicit args list
+import subprocess
+result = subprocess.run([cmd, arg1, arg2], check=True, text=True, shell=False)
 
 def unsafe_eval(expr: str):
     return eval(expr)  # nosec B307
